@@ -1,0 +1,30 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+    name: joeysantpersonalsite
+spec:
+  replicas: 3
+  template:
+      metadata:
+        labels:
+          app: joeysantpersonalsite
+      spec:
+        containers:
+          - name: joeypersonalsite
+            image: joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.2
+            ports:
+              - containerPort: 80
+            imagePullPolicy: Always
+        imagePullSecrets:
+          - name: myregistrykey
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: joeypersonalsite-lb
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+  selector:
+    app: joeysantpersonalsite
