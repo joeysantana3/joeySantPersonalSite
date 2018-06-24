@@ -7,8 +7,10 @@ node{
 	}
 	stage('Push Docker Image'){
 		withCredentials([string(credentialsId: 'ACRpassword', variable: 'azurecontainerregpassword')]){
-			bat "docker login joeyakscontainerreg.azurecr.io -u joeyAKScontainerReg --password-stdin ${azurecontainerregpassword}"
+			bat "docker login joeyakscontainerreg.azurecr.io -u joeyAKScontainerReg -p ${azurecontainerregpassword}"
 		}
 		bat 'docker push joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.3'
 	}
+	stage('Deploy Container to K8s'){
+	bat '
 }
