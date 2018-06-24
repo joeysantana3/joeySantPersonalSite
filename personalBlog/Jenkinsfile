@@ -1,0 +1,14 @@
+node{
+    stage('SCM Checkout'){
+        git credentialsId: '45c80516-d2ee-4054-99ec-c53b3cebac55', url: 'https://github.com/joeysantana3/joeySantPersonalSite.git'
+    }
+	stage('Build Docker Image'){
+		bat 'docker build -t joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.3 ./personalBlog/'
+	}
+	stage('Push Docker Image'){
+		withCredentials([string(credentialsId: 'ACRpassword', variable: 'azurecontainerregpassword')]){
+			bat "docker login joeyakscontainerreg.azurecr.io -u joeyAKScontainerReg --password-stdin ${azurecontainerregpassword}"
+		}
+		bat 'docker push joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.3'
+	}
+}
