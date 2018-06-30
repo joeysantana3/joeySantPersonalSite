@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
   <head>
@@ -134,42 +134,46 @@
                                 
                                 <!-- Post Headline Start -->
                                 <div class="post-title">
-                                    <h1>Deploy an Azure Kuberenetes Service cluster.</h1> 
+                                    <h1>Setting up a Jenkins server in Azure.</h1> 
                                    </div>
                                    <!-- Post Headline End -->
                                     
                                     
                                 <!-- Post Detail Start -->
                                 <div class="post-info">
-                                    <span>June 16, 2018 / by <a href="#" target="_blank">Joey Santana</a></span>
+                                    <span>June 30, 2018 / by <a href="#" target="_blank">Joey Santana</a></span>
                                    </div>
                                    <!-- Post Detail End -->
                                     
                                     
-                                    <p>Microsoft's newest Kuberenetes offering went General Availability on June 13th, 2018. General availability means the service <i><b>should</i></b> be stable enough for production. You can read the official blog post <a href="https://azure.microsoft.com/en-us/blog/azure-kubernetes-service-aks-ga-new-regions-new-features-new-productivity/">here</a>. I was at <a href="https://conferences.oreilly.com/velocity">O'Reilly's Velocity</a> conference during the announcement, and thought I would set up a cluster while I was in a talk. For work, I have been learning about Kubernetes because we are switching a lot of our microservices to run on Kubernetes. I was able to set up a cluster pretty easily within about 20 minutes while I was listening to a talk. Half of the time was waiting for the cluster to be spun up. I will share how I did it.</p>
+                                    <p>If you are anything like I was, you have probably heard of Jenkins, but really have no idea what it is and why people use it. If this is you, you have come to the right place. I will attempt to explain what Jenkins is, why it's useful, how to create a Jenkins server in Azure and finally how to configure it. I am not expert, but this should at least get you to understand the basic of Jenkins.</p>
+                                    
+                                    <p>Jenkins is an open source automation server. It's used to create "pipelines" or workflows that will automate a lot of the task involved with deploying software. I will explain how I use to help me with this website. However, it can be used for other things besides just web apps.</p>
+
+                                    <h3><a href="https://jenkins.io/" target="_blank">Link to Jenkins' official website.</a></h3>
                                     
                                 
                                 <!-- Post Image Start -->
                                 <div class="post-image margin-top-40 margin-bottom-40">
-                                   <img src="images/blog/aks-ga/k8s-azure-logos.jpg" alt="">                          
+                                   <a href="https://jenkins.io/" target="_blank"><img src="images/blog/jenkins/logo+title.jpg" alt=""></a>                          
                                   </div>
                                   <!-- Post Image End -->
                                   
                                   
                                    <p>Before we get started, I am going to make a few assumptions.</p>
-								   <div class="list list-style-2 margin-top-20">
+								                  <div class="list list-style-2 margin-top-20">
                                    <ul>
                                      <li>You have an Azure account you can use to test</li>
                                      <li>You have at least some experience in any command line interface</li>
                                     </ul>
                                    </div>
-								   <p>You can probably get by without any experience, but a few concepts may be frustrating to understand at first.</p>
+								                  <p>You can probably get by without any experience, but a few concepts may be frustrating to understand at first.</p>
                                    
                                  
                                  
                                  <!-- Post Video Tutorial Start -->
-								 <!--
-                                 <div class="video-box margin-top-40 margin-bottom-40">
+                                 <!-- commenting this section out
+								                  <div class="video-box margin-top-40 margin-bottom-40">
                                   <div class="video-tutorial">
                                    <a class="video-popup" href="https://www.youtube.com/watch?v=O2Bsw3lrhvs" title="Video Tutorial">
                                    <img src="images/blog/4.jpg" alt="">
@@ -177,107 +181,17 @@
                                   </div>
                                  <p>Integrate video on magnific popup for fast page load.</p>
                                 </div>
+                              -->
                                 <!-- Post Video Tutorial End -->
                                 
                                   
-                                   <p>First you need to install a few tools before we can interact with Azure through the command line. We'll install brew first. Then, using brew, we'll install the Azure CLI and the Kubernetes CLI, "az" and "kubectl".</p>
-                                   
-                                <div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-								</pre>
-                                </div>
-								    
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  brew install az && brew install kubectl
-								</pre>
-                                </div>
+                                   <p>If you're going to follow along, you will need your own Jenkins server to play around with. Luckily, Azure makes this pretty easy. If you have more than one Azure subscription, make sure you are in the right one. The easiest way is to scroll all the way down on the Azure portal main page and click Subscriptions. Click on your test or personal subscription.</p>
+
+                                  <p>I put my Jenkins server in its own resource group. You don't have to do this if you would prefer to organize your resource in a different way. If you want to do what I did, click the Resource Groups tab and then click the + Add button on top. Name your group.
+                                  Once your new Resource Group is created, there may bay a big button that allows you to add a new resource. If not, click the + Add button on the top of the UI (User Interface). You should be able to search for "Jenkins" and the first hit will probably the one you want. It's simply named Jenkins, it's published by Microsoft, and it's in the Compute category.</p>
+
+                                  <h1>TO BE CONTINUED...</h1>
                                   
-								<p>Verify both az and kubectl have been installed by using the "which" command.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  which az
-								  which kubectl
-								</pre>
-                                </div>
-								<p>You should see output that shows where the commands have been installed on your local machine</p>
-								
-								<p>Next we'll log in to Azure using az and verify we are in the right account. Wouldn't want to accidentally delete a production service 🤣.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az login
-								</pre>
-                                </div>
-								<p>This command will give you a URL to go to and a code. You need to go to this URL in your browser and enter the code. This authenticates your CLI to your Azure account. Once you enter the code on the web, tab back to your terminal and want for the command to finish.</p>
-								
-								<p>Verify your in the right account. This will return some JSON that shows your account details.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az account show
-								</pre>
-                                </div>
-								
-								<p>OK, you are logged into Azure from your command line, now lets do something! All of your resources in Azure should be stored in a resource group. A resource group is just a logical grouping of resources. Pretty simple, huh?</p>
-                                <div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az group create -l eastus -n personalSiteTestGroup
-								</pre>
-                                </div>
-								<p>So what did you just do? You used the "az" command to create a resource group in the East US location (-l switch) with the name personalSiteTestGroup (-n switch). Why East US? Well, East US data center usually gets support for the newest features first. When I first started with Azure, I was creating my resource groups in West US and found a lot of stuff didn't work.</p>
-								
-								<p>The next thing we are going to do is create an Azure Container Registry. A container registry is a place we can store our containers. I plan on writing a post about this topic in the future. But for now, just know that our application will run in a Docker container. When we create or update our code, we must create or update our container, then push the new container image to our container registry, then deploy to our cluster. Don't worry, we will do all of this.</p>
-								<p>When I began learning about Kubernetes, I didn't know much about containers. I still don't! I was just going through the motions of creating a cluster and didn't understand why the tutorials I was following were having me create a container registry. Well I will tell you now. If you want to actually deploy an application to your cluster, you need to upload that application to Azure. The way to do this is place your application in a container and upload the container image to your container registry. Lets create our registry now.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az acr create -n testSiteACR -g personalsitetestgroup --sku Basic
-								</pre>
-                                </div>
-								<p>As I mentioned, ACR stand for Azure Container Registry. The command we just ran created a registry with the name testSiteACR (-n switch) in our personalSiteTestGroup resource group (-g switch). There are different types of container registries, so you need to choose what type when you create it. Just use Basic for now (--sku switch).</p>
-								<p>This command should produce some JSON data that shows information about your newly created ACR.</p> 
-								
-								<p>Here comes the meat and potatoes. Creating your Azure Kubernetes Service cluster. Lets do it. WARNING: This takes a while, 10+ minutes. Make sure you let it finish. We are using the --verbose switch so were not just staring at "Running.." message for 10 minutes.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az aks create -n aksClusterTemp -g personalsitetestgroup --verbose
-								</pre>
-                                </div>
-								
-								<p>Note the name of the cluster, aksClusterTemp, specified using the -n switch. While this is running, I recommend logging into the Azure web portal using your browser. I like to verify with a GUI that I'm doing what I think I'm doing. Just go to <a href="https://portal.azure.com/">portal.azure.com</a> and log in. Poke around and find your resource group.</p>
-								 
-								<p>Congrats, you just created a Kubernetes cluster in Azure! So now what? Well, you have tell the kubectl command about your new cluster so you can manage it. Lets do that now.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az aks get-credentials --resource-group personalsitetestgroup --name aksclustertemp
-								</pre>
-                                </div>
-								<p>Running this command will tell the az command line tool to grab your new cluster's credentials and add them to your kubectl config file.</p>
-								
-								<p>I have a paranoid personality, so I like to double and triple check things. Lets verify kubectl is configured to talk with our new cluster.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  kubectl config get-contexts
-								</pre>
-                                </div>
-								<p>This should produce some self-explanatory text that shows what cluster you are associated to. If you have more than one, check for the one with the * next to it.</p>
-								
-								<p>OK, we are almost done here. Lets now verify kubectl can actually make a call to our cluster's API and get back some infor. We are going to get the node info of our cluster.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  kubectl get nodes
-								</pre>
-                                </div>
-								<p>This should show you a list of all of the nodes in your Kubernetes cluster. It will also show you how old the nodes are, good info when you are trying to verify you are working on your newly created cluster!</p>
-								
-								<p>Last step! Lets view the web GUI of our cluster. You should be pretty comfortable doing everything using the command line, but I like also having up the web GUI to verify everything I'm doing.</p>
-								<div class="margin-top-20 margin-bottom-20">
-								<pre class="brush: js">
-								  az aks browse --resource-group personalsitetestgroup --name aksclustertemp
-								</pre>
-                                </div>
-								<p>Running this command should open up a browser window, after a few seconds, that show your Kubernetes cluster's web GUI. You can poke around here and take a look. It's pretty interesting.</p>
-								
-			
                                   <!-- Post Author Bio Box Start -->
                                   <div class="about-author margin-top-70 margin-bottom-50">
                                     
