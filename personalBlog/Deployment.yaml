@@ -11,7 +11,7 @@ spec:
       spec:
         containers:
           - name: joeypersonalsite
-            image: joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.2
+            image: joeyakscontainerreg.azurecr.io/joeysantpersonalsite:v0.35
             ports:
               - containerPort: 80
             imagePullPolicy: Always
